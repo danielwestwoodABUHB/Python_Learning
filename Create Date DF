@@ -1,0 +1,29 @@
+import time
+import pandas as pd
+import holidays
+from datetime import datetime
+
+
+def create_date_table(start_date, end_date):
+    
+    date_range = pd.date_range(start=start_date, end=end_date)
+   
+    date_table = pd.DataFrame(date_range, columns=['Date'])
+
+  
+    date_table['Year'] = date_table['Date'].dt.year
+    date_table['Month'] = date_table['Date'].dt.month
+    date_table['Day'] = date_table['Date'].dt.day
+    date_table['Weekday'] = date_table['Date'].dt.day_name()
+    us_holidays = holidays.US(years=date_table['Year'].unique())
+    uk_holidays = holidays.UK(years=date_table['Year'].unique())
+
+    date_table['US_Holiday'] = date_table['Date'].apply(lambda x: x in us_holidays)
+    date_table['UK_Holiday'] = date_table['Date'].apply(lambda x: x in uk_holidays)
+    date_table['US_Holiday_Name'] = date_table['Date'].apply(lambda x: us_holidays.get(x))
+    date_table['UK_Holiday_Name'] = date_table['Date'].apply(lambda x: uk_holidays.get(x))
+
+    return date_table
+start_date = '1920-01-01'
+end_date = '2050-12-31'
+date_table = create_date_table(start_date, end_date)
